@@ -24,6 +24,6 @@ public class ReservationModel {
     private ReservationStatus status = ReservationStatus.Pending;
     private String user_email;
     private String shop_email;
-    private String desc;
+    private String description;
     private Double total_price;
 }

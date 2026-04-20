@@ -25,7 +25,7 @@ public interface MedicineRepository extends JpaRepository<Medicine, UUID> {
 
     @Query(value = "SELECT new pharmase.com.inventory_service.model.dto.ListMedicines(" +
             "m.id, m.drug_name, m.drug_type, m.manufacturer, m.mrp, m.pack_size, " +
-            "m.pack_type, m.prescription_required, m.selling_price) " +
+            "m.pack_type, m.prescription_required, m.selling_price, m.owner_email) " +
             "FROM Medicine m WHERE m.id = :id")
     Optional<ListMedicines> findMedicineById(UUID id);
 }

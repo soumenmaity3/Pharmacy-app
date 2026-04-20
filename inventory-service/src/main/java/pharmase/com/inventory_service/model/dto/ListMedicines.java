@@ -22,4 +22,5 @@ public class ListMedicines {
     private String pack_type;
     private Boolean prescription_required;
     private Double selling_price;
+    private String shop_email;
 }
