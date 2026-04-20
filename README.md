@@ -24,7 +24,7 @@ This README is based on the current repository structure and source code, not an
 | `inventory-service` | `8084` | Pharmacy-owned medicine inventory | Depends on pharmacy validation and medicine lookup |
 | `medicine-service` | `8085` | Searchable medicine catalog | Read-oriented service for medicine lookup |
 | `notification-service` | `8085` | Notification service placeholder | Currently only contains the Spring Boot app scaffold |
-| `reservation-service` | `8086` | Reservation flow in progress | Has models and security classes, but no controller/service flow yet |
+| `reservation-service` | `8086` | User reservation creation flow | Accepts reservation requests, validates JWT role, and fetches medicine details from `inventory-service` |
 
 ## Architecture
 
@@ -46,6 +46,7 @@ flowchart LR
     Auth --> Pharm
     Inventory --> Pharm
     Inventory --> Medicine
+    Reservation --> Inventory
 ```
 
 ## Implemented API areas
@@ -127,6 +128,21 @@ Behavior visible in code:
 - Allows a pharmacy account to manage its own medicine inventory
 - Verifies pharmacy identity and shop validity through `pharmacy-service`
 - Can create inventory entries directly or from a `medicine-service` catalog id
+- Returns inventory medicine details, including `shop_email`, for reservation lookups
+
+### `reservation-service`
+
+Base path: `api/v1/reserve`
+
+- `POST /create`
+
+Behavior visible in code:
+
+- Accepts authenticated reservation creation requests from `USER` accounts
+- Validates the bearer token locally through the service JWT helper
+- Fetches medicine details from `inventory-service` for each requested item
+- Persists a reservation record plus linked reserved-medicine detail rows
+- Returns a created response with `reservationId`, `totalPrice`, and `medicineCount`
 
 ## Running locally
 
@@ -142,7 +158,8 @@ Suggested startup order:
 6. Start `pharmacy-service`.
 7. Start `medicine-service`.
 8. Start `inventory-service`.
-9. Start any in-progress services only if you are actively working on them.
+9. Start `reservation-service` if you want to test reservation creation.
+10. Start any scaffold-only services only if you are actively working on them.
 
 Example commands:
 
@@ -180,7 +197,7 @@ Important note:
 - `api-gateway` currently defines routes only for `auth-service` and `pharmacy-service`.
 - `medicine-service` and `notification-service` are both configured for port `8085`, so they cannot run together without changing one port.
 - `notification-service` is only scaffolded at the moment.
-- `reservation-service` has security and model classes, but no controller/repository/service workflow is wired yet.
+- `reservation-service` now has a create flow, but it is still narrow in scope and only exposes reservation creation.
 - Some services exist in duplicated nested folders, such as `notification-service/notification-service`, `pharmacy-service/pharmacy-service`, and `user-service/user-service`.
 - IntelliJ project files are checked in under `user-service/.idea`.
 
